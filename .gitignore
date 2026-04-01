@@ -1,0 +1,86 @@
+# ╔═══════════════════════════════════════════════════════════════════════╗
+# ║  ⚠️  CRITICAL: NEVER commit .env to version control!               ║
+# ║  It contains API keys, tokens, and secrets.                         ║
+# ║  Use .env.example as the template for collaborators.                ║
+# ╚═══════════════════════════════════════════════════════════════════════╝
+
+# ── .env / Secrets ───────────────────────────────────────────────────
+.env
+.env.local
+.env.production
+.env.staging
+*.pem
+*.key
+secrets/
+
+# ── Python ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+*.whl
+pip-wheel-metadata/
+*.manifest
+*.spec
+
+# ── Virtual Environments ─────────────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── IDE / Editor ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ── Docker ───────────────────────────────────────────────────────────
+docker-compose.override.yml
+*.log
+
+# ── spaCy Models ─────────────────────────────────────────────────────
+# Downloaded spaCy model packages can be large; re-download in CI.
+en_core_web_sm/
+en_core_web_md/
+en_core_web_lg/
+en_core_web_trf/
+
+# ── Hugging Face Cache ──────────────────────────────────────────────
+.cache/
+huggingface/
+
+# ── Logs & Runtime ───────────────────────────────────────────────────
+logs/
+*.log
+*.pid
+*.seed
+
+# ── Testing / Coverage ──────────────────────────────────────────────
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# ── OS Files ─────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ── Misc ─────────────────────────────────────────────────────────────
+*.bak
+*.tmp
+*.temp
+.ipynb_checkpoints/
