@@ -1,0 +1,54 @@
+# ═══════════════════════════════════════════════════════════════════════
+# ContractEnv — Docker Ignore
+# ═══════════════════════════════════════════════════════════════════════
+# Keep the build context small and exclude sensitive files.
+
+# Secrets
+.env
+.env.local
+.env.production
+.env.staging
+
+# Version control
+.git
+.gitignore
+
+# Python caches
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Testing / coverage
+.pytest_cache
+htmlcov/
+.coverage
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation (not needed at runtime)
+*.md
+
+# Logs
+logs/
+*.log
+
+# HF / model caches
+.cache/
+huggingface/
+
+# Node (shouldn't exist, but just in case)
+node_modules/

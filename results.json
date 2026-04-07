@@ -1,0 +1,13 @@
+{
+  "environment": "contract-env",
+  "version": "1.0.0",
+  "model": "MODEL_NAME_HERE",
+  "timestamp": "2026-04-02T00:00:00+00:00",
+  "tasks": [
+    {"task_id": "task1", "score": 0.0, "steps": 0, "duration_seconds": 0.0, "passed": false},
+    {"task_id": "task2", "score": 0.0, "steps": 0, "duration_seconds": 0.0, "passed": false},
+    {"task_id": "task3", "score": 0.0, "steps": 0, "duration_seconds": 0.0, "passed": false}
+  ],
+  "average_score": 0.0,
+  "total_duration_seconds": 0.0
+}

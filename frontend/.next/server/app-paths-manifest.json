@@ -1,0 +1,7 @@
+{
+  "/negotiate/page": "app/negotiate/page.js",
+  "/session/[sessionId]/page": "app/session/[sessionId]/page.js",
+  "/join/[token]/page": "app/join/[token]/page.js",
+  "/demo/page": "app/demo/page.js",
+  "/session/[sessionId]/sign/page": "app/session/[sessionId]/sign/page.js"
+}
