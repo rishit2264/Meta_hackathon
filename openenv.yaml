@@ -1,191 +1,58 @@
-# ═══════════════════════════════════════════════════════════════════════
-# ContractEnv — OpenEnv Specification
-# ═══════════════════════════════════════════════════════════════════════
-# This file declares the environment metadata, task definitions, API
-# surface, and infrastructure requirements following the OpenEnv spec.
-# Validators and the Hugging Face Spaces runtime read this file to
-# understand how to interact with the environment.
-# ═══════════════════════════════════════════════════════════════════════
-
-# ── Identity ─────────────────────────────────────────────────────────
 name: contract-env
 version: "1.0.0"
-
-# Multi-line description rendered on the OpenEnv registry page.
 description: |
-  ContractEnv is a reinforcement learning environment for automated legal
-  contract negotiation.  An AI agent receives a draft business contract and
-  must negotiate it clause by clause — identifying unfair terms, proposing
-  redlines, and reaching agreements with a simulated counterparty.
-
-  The environment rewards accurate clause classification, high-quality
-  redline proposals, successful agreements, and efficient use of
-  negotiation turns.  Three difficulty tiers (easy → hard) test
-  progressively more complex contracts with subtler fairness issues and
-  more aggressive counterparties.
-
-  Built for the Meta / Scaler OpenEnv Hackathon.
-
-# Discoverable tags for the OpenEnv registry.
-tags:
-  - openenv            # Required tag for all OpenEnv environments
-  - legal              # Domain: legal / contract law
-  - negotiation        # Core mechanic: multi-turn negotiation
-  - enterprise         # Targets enterprise contract workflows
-  - nlp                # Relies on natural-language understanding
-  - rl                 # Reinforcement learning evaluation
-  - contract-analysis  # Clause-level contract analysis
-
-# ── Tasks ────────────────────────────────────────────────────────────
-# Each task defines a difficulty tier.  The agent is evaluated against
-# the target_score on each task independently.
+  Legal contract negotiation RL environment where AI agents negotiate business
+  contracts on behalf of two parties with private constraints. Agents argue,
+  propose redlines, and reach agreement autonomously — neither side sees the
+  other's private rules. Built for Meta/Scaler OpenEnv Hackathon 2026.
+author: "ContractEnv Team"
+license: MIT
+tags: [openenv, legal, negotiation, enterprise, nlp, rl, multi-agent, contract]
 tasks:
-  - task_id: task1
-    name: "Simple SaaS Agreement"
+  - id: task1
+    name: "Clause Identification"
     difficulty: easy
-    description: >
-      A straightforward SaaS service agreement with 5 clauses including
-      2 clearly unfair terms.  Tests basic clause identification and
-      labelling ability.  The simulated counterparty is cooperative and
-      readily accepts reasonable proposals.
+    target_score: 0.85
     max_turns: 20
-    target_score: 0.85       # High bar — easy contracts should be nailed
-
-  - task_id: task2
-    name: "Enterprise Licensing Deal"
+    description: "Agent identifies which of 6 NDA clauses are fair, unfair, or neutral"
+  - id: task2
+    name: "Clause Redlining"
     difficulty: medium
-    description: >
-      A multi-section enterprise licensing agreement with 8 clauses.
-      Contains subtle unfairness in IP assignment and liability sections
-      that requires nuanced legal reasoning.  The counterparty pushes
-      back on initial proposals but can be persuaded with well-reasoned
-      redlines.
+    target_score: 0.65
     max_turns: 30
-    target_score: 0.65       # Moderate — subtlety lowers expected score
-
-  - task_id: task3
-    name: "Cross-Border Partnership Agreement"
+    description: "Agent proposes improved replacement text for unfair clauses"
+  - id: task3
+    name: "Full Negotiation"
     difficulty: hard
-    description: >
-      A complex international partnership contract with 12 clauses
-      spanning multiple jurisdictions.  Features ambiguous language,
-      nested deal-breaker clauses, and an aggressive counterparty that
-      frequently counters or rejects proposals.  Tests the agent's
-      ability to prioritise, strategise, and adapt under pressure.
-    max_turns: 40
-    target_score: 0.45       # Low bar — complexity makes perfection rare
-
-# ── API Surface ──────────────────────────────────────────────────────
-# All endpoints are served via FastAPI on the configured port.
+    target_score: 0.45
+    max_turns: 50
+    description: "Agent negotiates multi-turn with scripted counterparty using private constraints"
 api:
-  # POST /reset — Start (or restart) an episode for the given task.
-  # Request body: { "task_id": "task1" }
-  # Returns: Observation (full contract + initial state)
-  reset:
-    method: POST
-    path: /reset
-    request_body:
-      task_id: string        # Which task to load
-    response: Observation    # Full initial observation
-
-  # POST /step — Submit an agent action and advance the environment.
-  # Request body: Action (clause_id, action_type, label, reason, proposed_text)
-  # Returns: { observation: Observation, reward: Reward }
-  step:
-    method: POST
-    path: /step
-    request_body: Action     # Agent's chosen action
-    response:
-      observation: Observation
-      reward: Reward         # Scalar + breakdown + done flag
-
-  # GET /state — Retrieve the current observation without stepping.
-  # Useful for re-fetching after a network failure or for debugging.
-  state:
-    method: GET
-    path: /state
-    response: Observation
-
-  # GET /tasks — List all available task configurations.
-  tasks:
-    method: GET
-    path: /tasks
-    response:
-      - TaskConfig           # Array of task definitions
-
-  # GET /health — Lightweight liveness probe for Docker / HF Spaces.
-  health:
-    method: GET
-    path: /health
-    response:
-      status: string         # "ok"
-      version: string        # Matches top-level version field
-
-# ── Spaces ───────────────────────────────────────────────────────────
-# Schemas for the observation and action spaces (informational).
-
-observation_space:
-  description: >
-    A JSON object containing the full contract text, an ordered list of
-    clauses (with category and deal-breaker flags), the negotiation
-    history so far, the current clause under discussion, and progress
-    metadata (turn count, agreements reached, total clauses).  The
-    ground-truth label is withheld from the observation — the agent must
-    infer fairness from the clause text alone.
-  format: JSON
-  schema_ref: "environment/models.py::Observation"
-
-action_space:
-  description: >
-    A JSON object specifying the target clause, the action type (flag,
-    propose, accept, reject, skip), an optional fairness label, a
-    free-text reason, and optional proposed replacement text.  The
-    action space is identical across difficulty tiers.
-  format: JSON
-  schema_ref: "environment/models.py::Action"
-
-# ── Reward Signal ────────────────────────────────────────────────────
+  base_url: "http://localhost:7860"
+  reset: "POST /reset"
+  step: "POST /step"
+  state: "GET /state"
+  tasks: "GET /tasks"
+  health: "GET /health"
+  grade: "POST /grade"
+  session_create: "POST /session/create"
+  session_join: "POST /session/join"
+  session_start: "POST /session/start"
+  session_status: "GET /session/status"
+  session_sign: "POST /session/sign"
 reward:
-  min: -1.0                  # Worst possible step reward
-  max: 1.0                   # Best possible step reward
-  partial_credit: true       # Intermediate values are meaningful
-  dense: true                # Reward is given every step, not just at episode end
-  components:
-    - flag_correct           # Correct identification of clause fairness
-    - label_correct          # Correct fair/unfair/neutral label
-    - proposal_quality       # Semantic quality of proposed redline
-    - agreement_bonus        # Clause successfully negotiated to agreement
-    - deal_breaker_penalty   # Mishandling a deal-breaker clause
-    - false_positive_penalty # Flagging a fair clause as unfair
-    - turn_efficiency_penalty # Encourages finishing in fewer turns
-
-# ── Infrastructure Requirements ─────────────────────────────────────
+  min: -1.0
+  max: 1.0
+  partial_credit: true
+  dense: true
 infrastructure:
-  min_memory_gb: 2           # Minimum RAM for the container
-  min_cpu: 1                 # Minimum vCPU count
-  max_inference_minutes: 20  # Hard timeout for a full evaluation run
-  port: 7860                 # Default port (matches HF Spaces expectation)
-
-# ── Environment Variables ────────────────────────────────────────────
-# These variables must be set at runtime (via .env or HF Spaces secrets).
+  min_memory_gb: 2
+  min_cpu: 1
+  max_inference_minutes: 20
+  port: 7860
+  python_version: "3.11"
 environment_variables:
-  API_BASE_URL:
-    description: >
-      Base URL of the LLM inference API used by the simulated
-      counterparty and by the reward model for proposal-quality scoring.
-    required: true
-    example: "https://api.openai.com/v1"
-
-  MODEL_NAME:
-    description: >
-      Model identifier passed to the LLM API (e.g. gpt-4o-mini).
-      Controls the intelligence level of the counterparty simulation.
-    required: true
-    example: "gpt-4o-mini"
-
-  HF_TOKEN:
-    description: >
-      Hugging Face API token with write access.  Required for deploying
-      to HF Spaces and pulling gated model weights if applicable.
-    required: true
-    example: "hf_xxxxxxxxxxxxxxxxxxxx"
+  API_BASE_URL: "LLM API endpoint"
+  MODEL_NAME: "Model identifier"
+  HF_TOKEN: "Hugging Face API token"
+  SESSION_SECRET: "Secret key for session token generation"
