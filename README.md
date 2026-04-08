@@ -39,6 +39,7 @@ npm run dev
 ```
 
 ## Architecture
+<img width="1010" height="751" alt="Screenshot 2026-04-08 191635" src="https://github.com/user-attachments/assets/13a1f3ca-d264-4b79-bc43-1c1c7fbaa79a" />
 - `environment/`: FastAPI backend, OpenEnv models, Env simulators, and Graders.
 - `frontend/`: Next.js 14 frontend showcasing the product (Pink "legal-elegance" design system).
 - `mcp_tools/`: Optional MCP tools for legal reference.
